@@ -30,6 +30,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -119,7 +120,7 @@ public class CarControllerTest {
          */
 
         mvc.perform( MockMvcRequestBuilders
-                .get("/employees/{id}", 1)
+                .get("/cars/{id}", 1)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
@@ -138,8 +139,9 @@ public class CarControllerTest {
          *   should utilize the car from `getCar()` below.
          */
 
-        mvc.perform( MockMvcRequestBuilders.delete("/cars/{id}", 1) )
-                .andExpect(status().isAccepted());
+        mvc.perform( MockMvcRequestBuilders
+                .delete("/cars/{id}", 1) )
+                .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
     }
 
     /**
