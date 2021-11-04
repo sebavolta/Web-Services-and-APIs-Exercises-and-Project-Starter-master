@@ -33,6 +33,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 /**
  * Implements testing of the CarController class.
@@ -97,6 +99,12 @@ public class CarControllerTest {
          *   below (the vehicle will be the first in the list).
          */
 
+        mvc.perform( MockMvcRequestBuilders
+                .get("/cars")
+                 .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.carList").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.carList[0].id", is(1)));
     }
 
     /**
@@ -109,6 +117,13 @@ public class CarControllerTest {
          * TODO: Add a test to check that the `get` method works by calling
          *   a vehicle by ID. This should utilize the car from `getCar()` below.
          */
+
+        mvc.perform( MockMvcRequestBuilders
+                .get("/employees/{id}", 1)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.details.model").value("Impala"));
     }
 
     /**
@@ -122,6 +137,9 @@ public class CarControllerTest {
          *   when the `delete` method is called from the Car Controller. This
          *   should utilize the car from `getCar()` below.
          */
+
+        mvc.perform( MockMvcRequestBuilders.delete("/cars/{id}", 1) )
+                .andExpect(status().isAccepted());
     }
 
     /**
