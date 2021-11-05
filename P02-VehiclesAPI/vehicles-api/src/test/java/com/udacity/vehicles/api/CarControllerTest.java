@@ -68,7 +68,7 @@ public class CarControllerTest {
     public void setup() {
         Car car = getCar();
         car.setId(1L);
-        given(carService.save(any())).willReturn(car);
+
         given(carService.findById(any())).willReturn(car);
         given(carService.list()).willReturn(Collections.singletonList(car));
     }
@@ -80,6 +80,10 @@ public class CarControllerTest {
     @Test
     public void createCar() throws Exception {
         Car car = getCar();
+        car.setId(1L);
+
+        given(carService.save(any())).willReturn(car);
+
         mvc.perform(
                 post(new URI("/cars"))
                         .content(json.write(car).getJson())
@@ -125,6 +129,28 @@ public class CarControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.details.model").value("Impala"));
+    }
+
+    /**
+     * Tests the update operation for a single car by ID.
+     * @throws Exception if the put operation for a single car fails
+     */
+    @Test
+    public void updateCar() throws Exception {
+        Car newCar = getCar();
+        newCar.setId(2L);
+        newCar.setCondition(Condition.NEW);
+
+        given(carService.save(any())).willReturn(newCar);
+
+        mvc.perform( MockMvcRequestBuilders
+                .put("/cars/{id}", 2)
+                .content(json.write(newCar).getJson())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.condition").value("NEW"));
     }
 
     /**
